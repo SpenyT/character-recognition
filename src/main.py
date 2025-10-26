@@ -1,19 +1,16 @@
 import numpy as np
 
-from utils.neural_network import NeuralNetwork
-from utils.neural_layers import *
-from utils.activations import ReLU
+from models.neural_network import NeuralNetwork
+from layers.fully_connected_layer import FCL
 
 
-X = np.random.randn(10, 5)
+X = np.random.randn(5, 10)
 
 net = NeuralNetwork()
-net.add(FullyConnectedLayer(5, 4))
-net.add(ReLU())
-net.add(FullyConnectedLayer(4, 3))
-
+net.add(FCL(5, 10, activation="relu", weight_initializer="he", bias_initializer="zeroes"))
+net.add(FCL(10, 5, activation="relu", weight_initializer="he", bias_initializer="zeroes"))
 output = net.forward_prop(X)
 print("Output: ", output)
 
-gradient_output = np.random.randn(10, 3)
+gradient_output = np.random.randn(5, 10)
 net.backward_prop(gradient_output, learning_rate=0.04)
