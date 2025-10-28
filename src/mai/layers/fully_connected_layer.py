@@ -1,16 +1,20 @@
 import numpy as np
 from typing import Optional, Callable, Tuple
-from mai.layers.utils.initializations import resolve_weight_initializer, resolve_bias_initializer
+from mai.initializations import build_initializer
 from mai.activations import build_activ
 from mai.layers.layers_abstract import Layer
 
 class FCL(Layer):
-    def __init__(self, n_input: int, n_output : int, activ: str = None, weight_initializer: str = "he", bias_initializer: str = "zeroes"):
+    def __init__(self, in_features: int, out_features : int, activ: str = None, weight_init: str = "he_uniform", bias_init: str = "zeroes"):
+        self.in_features = in_features
+        self.out_features = out_features
         self._activation_fn: Callable[[np.ndarray], np.ndarray] = None 
         self._activation_deriv: Callable[[np.ndarray], np.ndarray] = None
         self._activation_fn, self._activation_deriv = build_activ(activ)
-        self.W = np.random.randn(n_output, n_input) * resolve_weight_initializer(weight_initializer, n_input, n_output)
-        self.b = resolve_bias_initializer(bias_initializer, n_output)
+        w_init = build_initializer(weight_init)
+        b_init = build_initializer(bias_init)
+        self.W = w_init((in_features, out_features))
+        self.b = b_init((1, out_features))
         self._dW = np.zeros_like(self.W)
         self._db = np.zeros_like(self.b)
         self._input: Optional[np.ndarray] = None
@@ -24,7 +28,7 @@ class FCL(Layer):
     
     def forward_prop(self, X: np.ndarray) -> np.ndarray:
         self._input = X
-        self._Z = X @ self.W.T + self.b.T
+        self._Z = X @ self.W + self.b
         return self._activation_fn(self._Z)
 
     def backward_prop(self, gradient_output: np.ndarray, learning_rate: float) -> np.ndarray:
@@ -33,10 +37,10 @@ class FCL(Layer):
             print("ERROR: derivation shape: ", local.shape, "!= gradient output shape: ", gradient_output.shape)
         dZ = gradient_output * local
 
-        self._dW = dZ.T @ self._input
-        self._db = dZ.sum(axis=0, keepdims=True).T
+        self._dW = self._input.T @ dZ
+        self._db = dZ.sum(axis=0, keepdims=True)
 
-        grad_input = dZ @ self.W
+        grad_input = dZ @ self.W.T
 
         self.W -= learning_rate * self._dW
         self.b -= learning_rate * self._db
