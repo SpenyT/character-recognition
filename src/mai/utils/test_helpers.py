@@ -20,7 +20,7 @@ def show_example(net: NeuralNetwork, X: np.ndarray, y: np.ndarray, idx: int, img
     plt.show()
 
 # shows multiple examples at a time
-def show_grid(X: np.ndarray, y: np.ndarray, preds: np.ndarray, rows: int, cols: int, img_size: tuple[int, int], cmap: str ="gray", suptitle: str = None):
+def show_grid(X: np.ndarray, y: np.ndarray, preds: np.ndarray, rows: int, cols: int, img_size: tuple[int, int], cmap: str ="gray"):
     n = min(len(X), rows * cols)
     idx = np.random.choice(len(X), n, replace=False)
 
@@ -45,8 +45,6 @@ def show_grid(X: np.ndarray, y: np.ndarray, preds: np.ndarray, rows: int, cols: 
     for ax in axes[n:]:
         ax.axis("off")
 
-    if suptitle:
-        fig.suptitle(suptitle)
     plt.tight_layout()
     plt.show()
 
@@ -67,8 +65,7 @@ def show_random_predictions(
     n: int =None,
     img_size: tuple[int, int] =(28, 28), 
     as_letter: bool=False, 
-    seed=None, 
-    suptitle: str =None
+    seed=None,
 ):
     rng = random.Random(seed)
     n = min(len(y), rows * cols) if n is None else min(n, len(y), rows * cols)
@@ -86,4 +83,4 @@ def show_random_predictions(
         ys_disp = ys
         preds_disp = preds
 
-    show_grid(Xs, ys_disp, preds_disp, rows, cols, img_size, suptitle)
+    show_grid(Xs, ys_disp, preds_disp, rows, cols, img_size, cmap="gray")
