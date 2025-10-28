@@ -7,4 +7,4 @@ def kaggle_download_csv(dataset_name: str) -> pd.DataFrame:
     csv_files = glob.glob(os.path.join(root, "**", "*.csv"), recursive=True)
     assert csv_files, f"No CSV files found under: {root}"
     csv_path = csv_files[0]
-    df = pd.read_csv(csv_path, header=None)
+    return pd.read_csv(csv_path, header=None)

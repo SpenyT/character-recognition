@@ -1,6 +1,6 @@
 import numpy as np
-from layers import Layer
-from models.utils.loss import resolve_loss
+from mai.layers import Layer
+from mai.models.utils.loss import resolve_loss
 
 
 class NeuralNetwork:
