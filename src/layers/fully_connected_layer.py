@@ -5,7 +5,7 @@ from .utils.activations import resolve_activation
 from .layers_abstract import Layer
 
 class FCL(Layer):
-    def __init__(self, n_input: int, n_output : int, activation: str = None, weight_initializer: str = "he", bias_initializer: str = "zeros"):
+    def __init__(self, n_input: int, n_output : int, activation: str = None, weight_initializer: str = "he", bias_initializer: str = "zeroes"):
         self._activation_fn: Callable[[np.ndarray], np.ndarray] = None 
         self._activation_deriv: Callable[[np.ndarray], np.ndarray] = None
         self._activation_fn, self._activation_deriv = resolve_activation(activation)
@@ -24,16 +24,21 @@ class FCL(Layer):
     
     def forward_prop(self, X: np.ndarray) -> np.ndarray:
         self._input = X
-        self._Z = self.W.dot(X) + self.b # save pre-activation input
+        self._Z = X @ self.W.T + self.b.T
         return self._activation_fn(self._Z)
 
     def backward_prop(self, gradient_output: np.ndarray, learning_rate: float) -> np.ndarray:
-        dZ = gradient_output.T * self._activation_deriv(self._Z)
-        gradient_input = self.W.T @ dZ
-        gradient_weights = dZ @ self._input 
-        gradient_biases = np.sum(dZ, axis=1, keepdims=True)
+        local = self._activation_deriv(self._Z)
+        if local.shape != gradient_output.shape:
+            print("ERROR: derivation shape: ", local.shape, "!= gradient output shape: ", gradient_output.shape)
+        dZ = gradient_output * local
 
-        self.W -= learning_rate * gradient_weights
-        self.b -= learning_rate * gradient_biases
+        self._dW = dZ.T @ self._input
+        self._db = dZ.sum(axis=0, keepdims=True).T
 
-        return gradient_input.T
+        grad_input = dZ @ self.W
+
+        self.W -= learning_rate * self._dW
+        self.b -= learning_rate * self._db
+
+        return grad_input
