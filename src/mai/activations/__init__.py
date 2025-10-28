@@ -19,3 +19,4 @@ def available_activations() -> Dict[str, Tuple[Callable, Callable]]: return sort
 from mai.activations.default import _none
 from mai.activations.relu import _relu
 from mai.activations.sigmoid import _sigmoid
+from mai.activations.tanh import _tanh
