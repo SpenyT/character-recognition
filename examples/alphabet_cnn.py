@@ -43,8 +43,8 @@ print("\nDownloading new dataset...")
 df2 = kaggle_download_csv("sachinpatel21/az-handwritten-alphabets-in-csv-format")
 df2 = shuffle(df2, random_state=42).reset_index(drop=True)
 
-labels_new = df2.iloc[:, 0].to_numpy(dtype=int)                     # (N,)
-pixels_new = df2.iloc[:, 1:].to_numpy(dtype=np.float32) / 255.0     # (N, 784)
+labels_new = df2.iloc[:, 0].to_numpy(dtype=int)
+pixels_new = df2.iloc[:, 1:].to_numpy(dtype=np.float32) / 255.0
 X_new, Y_new = pixels_new, labels_new
 print("Download complete!")
 
