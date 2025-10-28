@@ -1,10 +1,8 @@
 import numpy as np
 from typing import Optional, Callable, Tuple
-from .utils.initialize import resolve_weight_initializer, resolve_bias_initializer
-from .utils.activate import resolve_activation
-from .layer import Layer
-
-__all__ = ["FCL"]
+from .utils.initializations import resolve_weight_initializer, resolve_bias_initializer
+from .utils.activations import resolve_activation
+from .layers_abstract import Layer
 
 class FCL(Layer):
     def __init__(self, n_input: int, n_output : int, activation: str = None, weight_initializer: str = "he", bias_initializer: str = "zeros"):
