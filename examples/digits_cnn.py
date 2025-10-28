@@ -11,8 +11,8 @@ from mai.layers import FCL
 from mai.models import NeuralNetwork
 
 model = [
-    FCL(64, 64, activation='relu'), 
-    FCL(64, 10, activation=None)
+    FCL(64, 64, activ='relu', weight_init="xavier_normal", bias_init="ones"), 
+    FCL(64, 10, activ=None, weight_init="xavier_uniform", bias_init="zeroes")
 ]
 
 net = NeuralNetwork(model, loss='cross_entropy')

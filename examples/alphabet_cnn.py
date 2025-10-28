@@ -4,6 +4,8 @@ from sklearn.utils import shuffle
 from mai.utils import kaggle_download_csv
 #from matplotlib import pyplot as plt
 
+print("Starting Alphabet Recognition using CNN...\n")
+print("Downloading Dataset...")
 # import kaggle dataset & randomize
 df = kaggle_download_csv("ashishguptajiit/handwritten-az")
 df = shuffle(df, random_state=42).reset_index(drop=True)
@@ -12,7 +14,7 @@ labels = df.iloc[:, 0].to_numpy(dtype=int)
 pixels = df.iloc[:, 1:].to_numpy(dtype=np.float32) / 255.0
 
 testing_size = 1000
-training_size =  10000 #for now select first 20,000 rows
+training_size =  20000 #for now select first 20,000 rows
 
 X_dev, Y_dev = pixels[:testing_size], labels[:testing_size]
 X_train, Y_train = pixels[testing_size:training_size], labels[testing_size:training_size]
@@ -25,8 +27,8 @@ from mai.models import NeuralNetwork
 from mai.layers import FCL
 
 model = [
-    FCL(784, 142, activ='relu',  weight_initializer="he"),
-    FCL(142, 142, activ='relu',  weight_initializer="he"),
+    FCL(784, 142, activ='relu',  weight_init="he_uniform", bias_init="zeroes"),
+    FCL(142, 142, activ='relu',  weight_init="he_uniform", bias_init="zeroes"),
     FCL(142,  26, activ=None)
 ]
 net = NeuralNetwork(model, loss='cross_entropy')
