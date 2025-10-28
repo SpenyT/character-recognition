@@ -5,7 +5,7 @@ from mai.losses import build_loss
 
 
 class NeuralNetwork:
-    def __init__(self, model : np.ndarray[Layer] = [], loss: str = "mse"):
+    def __init__(self, model : np.ndarray[Layer] = [], loss: str = "cross_entropy"):
         self.layers = model
         self.loss_fn, self.loss_prime_fn = build_loss(loss)
 
