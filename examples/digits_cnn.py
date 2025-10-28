@@ -1,5 +1,4 @@
 import numpy as np
-from mai.utils.test_helpers import show_random_predictions
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 
