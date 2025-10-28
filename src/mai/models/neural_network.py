@@ -1,13 +1,13 @@
 import numpy as np
 from tqdm import tqdm
 from mai.layers import Layer
-from mai.models.utils.loss import resolve_loss
+from mai.losses import build_loss
 
 
 class NeuralNetwork:
     def __init__(self, model : np.ndarray[Layer] = [], loss: str = "mse"):
         self.layers = model
-        self.loss, self.loss_prime = resolve_loss(loss)
+        self.loss_fn, self.loss_prime_fn = build_loss(loss)
 
     def add(self, layer):
         if not isinstance(layer, Layer):
@@ -46,9 +46,9 @@ class NeuralNetwork:
                 x = x.reshape(1, -1)
                 logits = self.forward_prop(x)
 
-                loss = self.loss(np.array([y]), logits)
+                loss = self.loss_fn(np.array([y]), logits)
                 err_sum += float(loss)
-                grad = self.loss_prime(np.array([y]), logits)
+                grad = self.loss_prime_fn(np.array([y]), logits)
                 self.backward_prop(grad, learning_rate)
 
                 pred = int(np.argmax(logits, axis=1)[0])
