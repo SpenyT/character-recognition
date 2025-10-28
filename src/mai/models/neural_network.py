@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 from mai.layers import Layer
 from mai.models.utils.loss import resolve_loss
 
@@ -28,24 +29,44 @@ class NeuralNetwork:
     def train(self, x_train, y_train, epochs: int, learning_rate: float, print_output: bool = True):
         x_train = np.asarray(x_train)
         y_train = np.asarray(y_train)
+        n = len(x_train)
 
-        print("Starting training...")
+        if print_output:
+            print("Starting training...")
+
         for epoch in range(epochs):
-            err = 0.0
+            err_sum = 0.0
             correct = 0
-            for x, y in zip(x_train, y_train):
+
+            it = zip(x_train, y_train)
+            if print_output:
+                it = tqdm(it, total=n, desc=f"Epoch {epoch+1}/{epochs}", leave=False)
+
+            for x, y in it:
                 x = x.reshape(1, -1)
                 logits = self.forward_prop(x)
-                err += self.loss(np.array([y]), logits)
+
+                loss = self.loss(np.array([y]), logits)
+                err_sum += float(loss)
                 grad = self.loss_prime(np.array([y]), logits)
                 self.backward_prop(grad, learning_rate)
 
                 pred = int(np.argmax(logits, axis=1)[0])
-                if pred == int(y): correct += 1
+                if pred == int(y):
+                    correct += 1
 
-            err /= len(x_train)
-            train_acc = correct / len(x_train)
-            print(f"Epoch {epoch+1}/{epochs} - loss: {err:.4f} - acc: {train_acc:.4f}")
+                if print_output:
+                    seen = correct + (0)
+                    processed = it.n if hasattr(it, "n") else 1
+                    avg_loss = err_sum / max(processed, 1)
+                    acc = correct / max(processed, 1)
+                    it.set_postfix(loss=f"{avg_loss:.4f}", acc=f"{acc:.4f}")
+
+            err = err_sum / n
+            train_acc = correct / n
+            if print_output:
+                tqdm.write(f"Epoch {epoch+1}/{epochs} - loss: {err:.4f} - acc: {train_acc:.4f}")
+                pass
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         logits = self.forward_prop(np.asarray(X))
