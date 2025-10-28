@@ -25,9 +25,9 @@ from mai.models import NeuralNetwork
 from mai.layers import FCL
 
 model = [
-    FCL(784, 142, activation='relu',  weight_initializer="he"),
-    FCL(142, 142, activation='relu',  weight_initializer="he"),
-    FCL(142,  26, activation=None)
+    FCL(784, 142, activ='relu',  weight_initializer="he"),
+    FCL(142, 142, activ='relu',  weight_initializer="he"),
+    FCL(142,  26, activ=None)
 ]
 net = NeuralNetwork(model, loss='cross_entropy')
 net.train(X_train, Y_train, epochs=5, learning_rate=0.01)

@@ -1,14 +1,14 @@
 import numpy as np
 from typing import Optional, Callable, Tuple
-from .utils.initializations import resolve_weight_initializer, resolve_bias_initializer
-from .utils.activations import resolve_activation
-from .layers_abstract import Layer
+from mai.layers.utils.initializations import resolve_weight_initializer, resolve_bias_initializer
+from mai.activations import build_activ
+from mai.layers.layers_abstract import Layer
 
 class FCL(Layer):
-    def __init__(self, n_input: int, n_output : int, activation: str = None, weight_initializer: str = "he", bias_initializer: str = "zeroes"):
+    def __init__(self, n_input: int, n_output : int, activ: str = None, weight_initializer: str = "he", bias_initializer: str = "zeroes"):
         self._activation_fn: Callable[[np.ndarray], np.ndarray] = None 
         self._activation_deriv: Callable[[np.ndarray], np.ndarray] = None
-        self._activation_fn, self._activation_deriv = resolve_activation(activation)
+        self._activation_fn, self._activation_deriv = build_activ(activ)
         self.W = np.random.randn(n_output, n_input) * resolve_weight_initializer(weight_initializer, n_input, n_output)
         self.b = resolve_bias_initializer(bias_initializer, n_output)
         self._dW = np.zeros_like(self.W)
