@@ -14,6 +14,8 @@ def resolve_activation(
             return sigmoid, sigmoid_prime
         case "tanh":
             return tanh, tanh_prime
+        case None:
+            return lambda x: x, lambda x: np.ones_like(x)
         case _:
             raise ValueError(f"Activation function '{activation_name}' not recognized.")
         
