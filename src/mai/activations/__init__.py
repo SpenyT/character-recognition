@@ -12,7 +12,7 @@ def register_activ(name: str):
 def build_activ(name: str) -> Tuple[Callable, Callable]:
     key = None if name is None else name.lower()
     if key not in _ACTIV_REG:
-        raise ValueError(f"Unknown activation '{name}'. Available: {list(_ACTIV_REG)}")
+        raise   
     return _ACTIV_REG[key]
 
 def available_activations() -> Dict[str, Tuple[Callable, Callable]]: return sorted(_ACTIV_REG)
