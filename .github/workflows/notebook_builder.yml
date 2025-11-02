@@ -1,0 +1,42 @@
+name: Build notebook from Python files (on PR close to main)
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  build-notebook:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install nbformat
+
+      - name: Build notebook from *.py
+        run: |
+          python scripts/py2ipynb.py --out repo_snapshot.ipynb
+
+      - name: Commit & push notebook
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "repo_snapshot.ipynb"
+          message: "chore: update aggregated notebook after PR merge (#${{ github.event.pull_request.number }})"
+          default_author: github_actions
