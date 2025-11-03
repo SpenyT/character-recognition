@@ -1,12 +1,10 @@
 import numpy as np
-from typing import Callable, Tuple
-from mai.activations import register_activ
+from . import register_activ, Activation, Array
 
 @register_activ("relu")
-def _relu() -> Tuple[Callable, Callable]:
-    def f(Z: np.ndarray) -> np.ndarray:
+def _relu() -> Activation:
+    def f(Z: Array) -> Array:
         return np.maximum(0, Z)
-    def df(Z: np.ndarray) -> np.ndarray:
+    def df(Z: Array) -> Array:
         return (Z > 0).astype(float)
-    
     return f, df

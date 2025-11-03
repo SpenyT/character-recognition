@@ -1,12 +1,11 @@
 import numpy as np
-from typing import Callable, Tuple
-from mai.activations import register_activ
+from . import register_activ, Activation, Array
 
 @register_activ("tanh")
-def _tanh() -> Tuple[Callable, Callable]:
-    def f(Z: np.ndarray) -> np.ndarray:
+def _tanh() -> Activation:
+    def f(Z: Array) -> Array:
         return np.tanh(Z)
-    def df(Z: np.ndarray) -> np.ndarray:
+    def df(Z: Array) -> Array:
         A = np.tanh(Z)
         return 1.0 - A * A
     
